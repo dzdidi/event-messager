@@ -1,0 +1,24 @@
+{
+  "name": "event-messager",
+  "version": "0.0.1",
+  "description": "Event messager for bauhaus based on redis pub/sub",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dzdidi/event-messager.git"
+  },
+  "author": "Denys Zaliskyi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dzdidi/event-messager/issues"
+  },
+  "homepage": "https://github.com/dzdidi/event-messager#readme",
+  "dependencies": {
+    "mocha": "^2.3.2",
+    "mongoose": "^4.1.7",
+    "sinon": "^1.16.1"
+  }
+}
