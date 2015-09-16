@@ -1,4 +1,4 @@
-<h1>This package implements dataabase hosted Pub/Sub Event messaging system based<h1>
+<h1>This package implements dataabase hosted Pub/Sub Event messaging system based</h1>
 
 *Note:*
 > default database is mongoDB (this package includes connector to it)
