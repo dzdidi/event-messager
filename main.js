@@ -1,25 +1,25 @@
-module.exports = function(mongo_address, eventAddress){
-  var dbConnector = require('./lib/db-connector.js')(mongo_address);
+module.exports = function(eventAddress){
 
+  var dbConnector = (dbConnector === undefined) ? require('./lib/db-connector.js') : dbConnector;
   var events = {};
   var addresses = [];
 
   // ADDRESS
   addresses.push(eventAddress);
-  for(var i = 1; i < eventAddress.split(":").length; i++){
-    addresses.push(eventAddress.split(":").slice(0, eventAddress.split(":").length - i).join(":"));
+  var ea = eventAddress.split(":");
+  for(var i = 1; i < ea.length; i++){
+    addresses.push(ea.slice(0, ea.length - i).join(":").concat(":*"));
   }
   addresses.push("*");
 
   //LOOKUP
-  dbConnector.read(function(err, task){
+  dbConnector.read("free", function(err, task){
     if(err){
       console.log(err);
       return;
     }
     if(addresses.indexOf(task.address) <= -1) return;
     if(Object.keys(events).indexOf(task.name) <= -1) return;
-    console.log(task);
     if((task.dateToExecute <= new Date()) || !(task.dateToExecute)){
       events[task.name].forEach(function(act){
         dbConnector.write(task, "taken");
@@ -30,12 +30,15 @@ module.exports = function(mongo_address, eventAddress){
     };
   });
 
-  //CLEANUP
-  // delete taken but not done tasks
+  return {
+    setConnector: function(connector) {
+      dbConnector = connector;
+    },
 
-  // delete old done tasks
+    getConnector: function(){
+      return dbConnector
+    },
 
-  return{
     getAddresses: function(){
       return addresses;
     },
@@ -66,7 +69,7 @@ module.exports = function(mongo_address, eventAddress){
     },
 
     removeListener: function(eventName, index){
-        events[eventName].splice(index, 1);
+      events[eventName].splice(index, 1);
     },
 
     removeEvent: function(eventName){
@@ -74,6 +77,7 @@ module.exports = function(mongo_address, eventAddress){
     },
 
     publish: function(task){
+      task.dateToExecute = (task.dateToExecute === undefined) ? new Date() : task.dateToExecute;
       dbConnector.write(task, "free");
     }
   };
